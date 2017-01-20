@@ -55,9 +55,10 @@ public class MainActivity extends AppCompatActivity implements AIListener,TextTo
 
         tts = new TextToSpeech(this,this);
         textView = (TextView)findViewById(R.id.resulttext);
-        final AIConfiguration config = new AIConfiguration("83fe62075c714a3b8edfcb47f3379ed8",
-                AIConfiguration.SupportedLanguages.English,
-                AIConfiguration.RecognitionEngine.System);
+
+        final AIConfiguration config = new AIConfiguration("67565cd4b0a34c6c82ec141d969541be",
+                AIConfiguration.SupportedLanguages.EnglishUS,
+                AIConfiguration.RecognitionEngine.Google);
 
         aiService = AIService.getService(this, config);
         aiService.setListener(this);
@@ -152,8 +153,7 @@ public class MainActivity extends AppCompatActivity implements AIListener,TextTo
         if(requestCode == CODE) {
             if (permissions[0] == Manifest.permission.RECORD_AUDIO) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //  selectedImage = getImageUri(LocationPhoto.this,photos);
-                    Toast.makeText(getApplicationContext(),"Enabled",Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),"Enabled",Toast.LENGTH_LONG).show();
                 }
             }
         }

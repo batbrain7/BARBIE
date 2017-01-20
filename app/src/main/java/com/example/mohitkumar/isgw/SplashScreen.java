@@ -23,7 +23,7 @@ public class SplashScreen extends Activity {
                 try {
                     sleep(3000);
 
-                        Intent intent=new Intent(getApplicationContext(),SpeechToText.class);
+                        Intent intent=new Intent(getApplicationContext(),MainActivity.class);
                         startActivity(intent);
 
                 } catch (InterruptedException e) {
