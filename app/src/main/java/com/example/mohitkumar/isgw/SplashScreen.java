@@ -62,7 +62,7 @@ public class SplashScreen extends Activity implements TextToSpeech.OnInitListene
             tts.speak(ar[i], TextToSpeech.QUEUE_FLUSH, null);
             textView.setText(arr[i]);
             try {
-                Thread.sleep(350);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
