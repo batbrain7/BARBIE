@@ -54,7 +54,7 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
     String s;
     String ACCESS_TOKEN="67565cd4b0a34c6c82ec141d969541be";
     private TextView txtSpeechInput,res;
-    private ImageButton btnSpeak;
+    private FloatingActionButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -62,10 +62,10 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
         setContentView(R.layout.activity_speechtotext);
         txtSpeechInput=(TextView)findViewById(R.id.txtSpeechInput);
         res=(TextView)findViewById(R.id.response);
-        refbut = (FloatingActionButton)findViewById(R.id.float_butt2);
+        //refbut = (FloatingActionButton)findViewById(R.id.float_butt2);
         chatbut = (FloatingActionButton)findViewById(R.id.float_butt1);
-        btnSpeak=(ImageButton)findViewById(R.id.btnSpeak);
-        cardView =(CardView)findViewById(R.id.card_view1);
+        btnSpeak=(FloatingActionButton)findViewById(R.id.btnSpeak);
+        //cardView =(CardView)findViewById(R.id.card_view1);
         tts = new TextToSpeech(this,this);
 
         chatbut.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +81,7 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
             @Override
             public void onClick(View v) {
                 promptSpeechInput();
-                cardView.setVisibility(View.GONE);
+//                cardView.setVisibility(View.GONE);
             }
         });
 
@@ -117,7 +117,7 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
             case REQ_CODE_SPEECH_INPUT: {
                 if (resultCode == RESULT_OK && null != data) {
 
-                    cardView.setVisibility(View.VISIBLE);
+                    //cardView.setVisibility(View.VISIBLE);
 
                     final ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
