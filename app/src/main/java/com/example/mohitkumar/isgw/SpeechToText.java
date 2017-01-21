@@ -66,7 +66,7 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
         chatbut = (FloatingActionButton)findViewById(R.id.float_butt1);
         btnSpeak=(ImageButton)findViewById(R.id.btnSpeak);
         cardView =(CardView)findViewById(R.id.card_view1);
-        tts = new TextToSpeech(this,this);
+        tts = new TextToSpeech(SpeechToText.this,SpeechToText.this);
 
         chatbut.setOnClickListener(new View.OnClickListener() {
             @Override

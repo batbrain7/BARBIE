@@ -5,15 +5,19 @@ package com.example.mohitkumar.isgw;
  */
 
 import android.content.res.AssetManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,7 +33,16 @@ import org.alicebot.ab.MagicStrings;
 import org.alicebot.ab.PCAIMLProcessorExtension;
 import org.alicebot.ab.Timer;
 
+import ai.api.AIDataService;
+import ai.api.AIServiceException;
+import ai.api.android.AIConfiguration;
+import ai.api.model.AIRequest;
+import ai.api.model.AIResponse;
+import ai.api.model.Result;
+
 public class ChatBotActivity extends AppCompatActivity {
+
+    String ACCESS_TOKEN="67565cd4b0a34c6c82ec141d969541be";
 
 
     private ListView mListView;
@@ -39,6 +52,7 @@ public class ChatBotActivity extends AppCompatActivity {
     public Bot bot;
     public static Chat chat;
     private ChatMessageAdapter mAdapter;
+    String s,sres;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +68,72 @@ public class ChatBotActivity extends AppCompatActivity {
         mButtonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String message = mEditTextMessage.getText().toString();
+                final String message = mEditTextMessage.getText().toString();
                 //bot
                 String response = chat.multisentenceRespond(mEditTextMessage.getText().toString());
                 if (TextUtils.isEmpty(message)) {
                     return;
                 }
-                sendMessage(message);
-                mimicOtherMessage(response);
-                mEditTextMessage.setText("");
-                mListView.setSelection(mAdapter.getCount() - 1);
+
+
+                s=message;
+
+                final AIConfiguration config = new AIConfiguration(ACCESS_TOKEN,
+                        AIConfiguration.SupportedLanguages.English,
+                        AIConfiguration.RecognitionEngine.System);
+
+                final AIDataService aiDataService = new AIDataService(config);
+
+                final AIRequest aiRequest = new AIRequest();
+                aiRequest.setQuery(s);
+
+                new AsyncTask<AIRequest, Void, AIResponse>() {
+                    @Override
+                    protected AIResponse doInBackground(AIRequest... requests) {
+                        final AIRequest request = requests[0];
+                        try {
+                            final AIResponse response = aiDataService.request(aiRequest);
+                            return response;
+                        } catch (AIServiceException e) {
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void onPostExecute(AIResponse aiResponse) {
+
+                        if(aiResponse == null){
+                            //Log.d("Result","NULL");
+                        }
+                        //if (aiResponse != null ) {
+                        // Log.d("INHERE","Entered");
+                        // process aiResponse here
+                        Result result = aiResponse.getResult();
+
+                        if(result != null) {
+
+                             sres = result.getFulfillment().getSpeech().toString();
+
+                            sendMessage(message);
+                            Log.d("RES",sres);
+                            mimicOtherMessage(sres);
+                            mEditTextMessage.setText("");
+                            mListView.setSelection(mAdapter.getCount() - 1);
+                            // Log.d("INHERE1",s);
+
+                            //makeJsonObjectRequest();
+
+                        } else  {
+                            onPostExecute( aiResponse);
+
+                        }
+                        //}
+                        //Log.d("INHERE3","NOW HERE");
+                    }
+                }.execute(aiRequest);
+
+
             }
+
         });
         //checking SD card availablility
         boolean a = isSDCARDAvailable();
@@ -125,14 +194,14 @@ public class ChatBotActivity extends AppCompatActivity {
     }
 
     private void sendMessage() {
-        ChatMessage chatMessage = new ChatMessage(null, true, true);
+        ChatMessage chatMessage = new ChatMessage(sres, true, true);
         mAdapter.add(chatMessage);
 
         mimicOtherMessage();
     }
 
     private void mimicOtherMessage() {
-        ChatMessage chatMessage = new ChatMessage(null, false, true);
+        ChatMessage chatMessage = new ChatMessage(sres, false, true);
         mAdapter.add(chatMessage);
     }
     //check SD card availability
