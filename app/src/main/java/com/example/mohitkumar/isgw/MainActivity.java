@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements AIListener,TextTo
 
     private AIService aiService;
     TextView textView;
-    Button button;
+    ImageButton button;
     private TextToSpeech tts;
     private static final int CODE = 100;
 
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements AIListener,TextTo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button = (Button) findViewById(R.id.button_mic);
+        button = (ImageButton) findViewById(R.id.button_mic);
 
         int permissionCheck = ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
 
