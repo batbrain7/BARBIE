@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -40,14 +43,14 @@ import ai.api.model.Result;
  * Created by Dell on 1/21/2017.
  */
 
-public class SpeechToText extends AppCompatActivity {
+public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnInitListener{
 
 
+    TextToSpeech tts;
     String sout;
+    FloatingActionButton refbut,chatbut;
+    CardView cardView;
     private static String TAG = MainActivity.class.getSimpleName();
-    private String jsonResponse;
-    String url1 = "https://api.api.ai/api/query?v=20150910&query=";
-    String url2 = "&lang=en&sessionId=b6a6145c-4945-4681-bb51-1544ff061146&timezone=2017-01-21T05:05:13+0530' -H 'Authorization:Bearer 67565cd4b0a34c6c82ec141d969541be";
     String s;
     String ACCESS_TOKEN="67565cd4b0a34c6c82ec141d969541be";
     private TextView txtSpeechInput,res;
@@ -59,13 +62,18 @@ public class SpeechToText extends AppCompatActivity {
         setContentView(R.layout.activity_speechtotext);
         txtSpeechInput=(TextView)findViewById(R.id.txtSpeechInput);
         res=(TextView)findViewById(R.id.response);
+        refbut = (FloatingActionButton)findViewById(R.id.float_butt2);
+        chatbut = (FloatingActionButton)findViewById(R.id.float_butt1);
         btnSpeak=(ImageButton)findViewById(R.id.btnSpeak);
+        cardView =(CardView)findViewById(R.id.card_view1);
+        tts = new TextToSpeech(this,this);
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 promptSpeechInput();
+                cardView.setVisibility(View.GONE);
             }
         });
 
@@ -100,6 +108,8 @@ public class SpeechToText extends AppCompatActivity {
         switch (requestCode) {
             case REQ_CODE_SPEECH_INPUT: {
                 if (resultCode == RESULT_OK && null != data) {
+
+                    cardView.setVisibility(View.VISIBLE);
 
                     final ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
@@ -164,6 +174,8 @@ public class SpeechToText extends AppCompatActivity {
 
 
                                 res.setText(s);
+                                speakOut();
+
                                 Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
                             } else  {
                                 onPostExecute( aiResponse);
@@ -181,57 +193,34 @@ public class SpeechToText extends AppCompatActivity {
 
     }
 
-    private void makeJsonObjectRequest() {
 
-      final String finalStr=url1+sout+url2;
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
 
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                finalStr,(JSONObject) null, new Response.Listener<JSONObject>() {
+            int result = tts.setLanguage(Locale.US);
 
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.d(TAG, response.toString());
-
-                try {
-                    // Parsing json object response
-                    // response will be a json object
-                    //String name = response.getString("name");
-                    //String email = response.getString("email");
-                    //JSONObject phone = response.getJSONObject("phone");
-                    //String home = phone.getString("home");
-                    //String mobile = phone.getString("mobile");
-
-                    jsonResponse = response.getJSONObject("fulfillment").getString("speech");
-
-                    Log.d("Response",jsonResponse);
-
-                    res.setText(jsonResponse);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(),
-                            "Error: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
-                }
-
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.d("TTS", "This Language is not supported");
+            } else {
+               // btnspeak.setEnabled(true);
+                speakOut();
             }
-        }, new Response.ErrorListener() {
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        MySingleton.getInstance(SpeechToText.this).addToRequestQueue(jsonObjReq);
-        // Adding request to request queue
-        //AppController.getInstance().addToRequestQueue(jsonObjReq);
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
-
+    private void speakOut() {
+       String text = res.getText().toString();
+        tts.speak(text,TextToSpeech.QUEUE_FLUSH,null);
+    }
 }
 
