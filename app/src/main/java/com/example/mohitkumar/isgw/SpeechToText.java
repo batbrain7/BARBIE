@@ -105,22 +105,24 @@ public class SpeechToText extends AppCompatActivity {
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
                     txtSpeechInput.setText(result.get(0));
-                    for(int i=0;i<result.size()-1;i++){
+                   // for(int i=0;i<result.size()-1;i++){
 
-                            s=result.get(i)+" ";
+                   //         s=result.get(i)+" ";
 
-                    }
-                    sout = "";
-                    for(int i=0;i<s.length();i++){
-                        if(s.charAt(i)==' '){
-                            sout+="%20";
-                        }
-                        else{
-                            sout+=s.charAt(i);
-                        }
-                    }
+                    //}
+                    //sout = "";
+                    //for(int i=0;i<s.length();i++){
+                      //  if(s.charAt(i)==' '){
+                      //      sout+="%20";
+                      //  }
+                       // else{
+                     //       sout+=s.charAt(i);
+                    //    }
+                  //  }
                      //finalStr=url1+sout+url2;
 
+
+                    s = txtSpeechInput.getText().toString();
 
                     final AIConfiguration config = new AIConfiguration(ACCESS_TOKEN,
                             AIConfiguration.SupportedLanguages.English,
@@ -144,15 +146,21 @@ public class SpeechToText extends AppCompatActivity {
                         }
                         @Override
                         protected void onPostExecute(AIResponse aiResponse) {
+
+                            if(aiResponse == null){
+                                //Log.d("Result","NULL");
+                            }
                             //if (aiResponse != null ) {
+                           // Log.d("INHERE","Entered");
                                 // process aiResponse here
                                 Result result = aiResponse.getResult();
 
-                            if(result != null&& !result.equals("")) {
+                            if(result != null) {
                                 String s = result.getFulfillment().getSpeech().toString();
 
+                               // Log.d("INHERE1",s);
 
-                                makeJsonObjectRequest();
+                                //makeJsonObjectRequest();
 
 
                                 res.setText(s);
@@ -162,6 +170,7 @@ public class SpeechToText extends AppCompatActivity {
                                 res.setText("Please say that again!");
                             }
                             //}
+                            //Log.d("INHERE3","NOW HERE");
                         }
                     }.execute(aiRequest);
                 }
