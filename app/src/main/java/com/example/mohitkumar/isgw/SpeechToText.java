@@ -68,6 +68,14 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
         cardView =(CardView)findViewById(R.id.card_view1);
         tts = new TextToSpeech(this,this);
 
+        chatbut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(SpeechToText.this,ChatBotActivity.class);
+                startActivity(intent);
+            }
+        });
+
         btnSpeak.setOnClickListener(new View.OnClickListener() {
 
             @Override
