@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements AIListener,TextTo
 
     private AIService aiService;
     TextView textView;
-    Button button;
+    ImageButton button;
     private TextToSpeech tts;
     private static final int CODE = 100;
 
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements AIListener,TextTo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button = (Button) findViewById(R.id.button_mic);
+        button = (ImageButton) findViewById(R.id.button_mic);
 
         int permissionCheck = ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
 
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements AIListener,TextTo
         textView = (TextView)findViewById(R.id.resulttext);
 
         final AIConfiguration config = new AIConfiguration("67565cd4b0a34c6c82ec141d969541be",
-                AIConfiguration.SupportedLanguages.EnglishUS,
+                AIConfiguration.SupportedLanguages.fromLanguageTag("en_IN"),
                 AIConfiguration.RecognitionEngine.Google);
 
         aiService = AIService.getService(this, config);
@@ -84,14 +85,26 @@ public class MainActivity extends AppCompatActivity implements AIListener,TextTo
         String parameterString = "";
 
         if (result.getParameters() != null && !result.getParameters().isEmpty()) {
-            for (final Map.Entry<String, JsonElement> entry : result.getParameters().entrySet()) {
-                parameterString += "(" + entry.getKey() + ", " + entry.getValue() + ") ";
+            //for (final Map.Entry<String, JsonElement> entry : result.getFulfillment().getSpeech().) {
+            //    parameterString += "(" + entry.getKey() + ", " + entry.getValue() + ") ";
+            //}
+
+            parameterString = result.getFulfillment().getSpeech().toString();
+            textView.setText(parameterString);
+
+
+            if(parameterString.equals(null)) {
+                textView.setText("No answer found !!!");
             }
+        } else {
+            parameterString = "Please say that again!!";
+            textView.setText(parameterString);
         }
 
-        textView.setText("Query:" + result.getResolvedQuery() +
-                "\nAction: " + result.getAction() +
-                "\nParameters: " + parameterString);
+      //  textView.setText("Query:" + result.getResolvedQuery() +
+        //        "\nAction: " + result.getAction() +
+          //"\nParameters: " + parameterString);
+
 
         speakOut();
 
