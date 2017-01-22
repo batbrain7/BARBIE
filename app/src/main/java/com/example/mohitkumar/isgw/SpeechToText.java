@@ -52,10 +52,10 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
 
 
     TextToSpeech tts;
-    String sout;
+    String sout,action1;
     FloatingActionButton refbut,chatbut;
     CardView cardView;
-    String URL1 = "http://7d0e6594.ngrok.io/isgw/index.php?";
+
     private static String TAG = MainActivity.class.getSimpleName();
     String s,jsonResponse;
     String ACCESS_TOKEN="67565cd4b0a34c6c82ec141d969541be";
@@ -189,7 +189,7 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
                             if(result != null) {
 
 
-                                String action1 = result.getStringParameter("action");
+                                action1 = result.getStringParameter("action");
                                 String appliance1 = result.getStringParameter("appliance");
                                 String location = result.getStringParameter("location");
                                 String s = result.getFulfillment().getSpeech().toString();
@@ -207,17 +207,29 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
                                 if(action1.equals("turn on"))
                                 {
                                     action1 = "on";
+                                   // URL1 = URL1 + "action=" + action1 + "&appliance="+appliance1+
+                                   //         "&location=" + location;
+                                    Log.d("ON",action1);
                                 } else if(action1.equals("turn off")) {
                                     action1 = "off";
+                                 //   URL1 = URL1 + "action=" + action1 + "&appliance="+appliance1+
+                                 //           "&location=" + location;
+                                    Log.d("OFF",action1);
                                 }
 
-                                URL1 = URL1 + "action=" + action1 + "&appliance="+appliance1+
+                                Log.d("Stat",action1);
+
+                                String URL1 = "http://7d0e6594.ngrok.io/isgw/index.php?action=" + action1 + "&appliance="+appliance1+
                                         "&location=" + location;
+
+
+
+                                Log.d("URL",URL1);
 
                                 final RequestQueue requestQueue = Volley.newRequestQueue(SpeechToText.this);
 
 
-                                StringRequest stringRequest = new StringRequest(Request.Method.GET, URL1, new Response.Listener<String>() {
+                                StringRequest stringRequest = new StringRequest(Request.Method.POST, URL1, new Response.Listener<String>() {
                                     @Override
                                     public void onResponse(String response) {
                                         Log.d("SUCCESS","Request made");

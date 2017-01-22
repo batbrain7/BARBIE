@@ -51,8 +51,8 @@ public class ChatBotActivity extends AppCompatActivity {
 
     String ACCESS_TOKEN="67565cd4b0a34c6c82ec141d969541be";
 
-    String URL1 = "http://7d0e6594.ngrok.io/isgw/index.php?";
 
+    String action1;
     private ListView mListView;
     private FloatingActionButton mButtonSend;
     private EditText mEditTextMessage;
@@ -119,7 +119,7 @@ public class ChatBotActivity extends AppCompatActivity {
 
                         if(result != null) {
 
-                            String action1 = result.getStringParameter("action");
+                            action1 = result.getStringParameter("action");
                             String appliance1 = result.getStringParameter("appliance");
                             String location = result.getStringParameter("location");
 
@@ -133,8 +133,10 @@ public class ChatBotActivity extends AppCompatActivity {
                             }
 
 
-                            URL1 = URL1 + "action=" + action1 + "&appliance="+appliance1+
+                            String URL1 = "http://7d0e6594.ngrok.io/isgw/index.php?action=" + action1 + "&appliance="+appliance1+
                                     "&location=" + location;
+                            Log.d("URL",URL1);
+
 
                        //     Toast.makeText(getApplicationContext(),"action=" + action1 + "&appliance="+appliance1+
                          //           "&location=" + location, Toast.LENGTH_LONG).show();
@@ -142,7 +144,7 @@ public class ChatBotActivity extends AppCompatActivity {
                             final RequestQueue requestQueue = Volley.newRequestQueue(ChatBotActivity.this);
 
 
-                            StringRequest stringRequest = new StringRequest(Request.Method.GET, URL1, new Response.Listener<String>() {
+                            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL1, new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
                                     Log.d("Success","Request made");
