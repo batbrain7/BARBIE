@@ -32,7 +32,7 @@ public class SplashScreen extends Activity implements TextToSpeech.OnInitListene
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_splashscreen);
 
-        tts = new TextToSpeech(this,this);
+//        tts = new TextToSpeech(this,this);
 
         textView = (TextView)findViewById(R.id.text3);
 
@@ -43,7 +43,16 @@ public class SplashScreen extends Activity implements TextToSpeech.OnInitListene
 //                    sleep(3000);
 
              //   new Animate().execute();
-        speakOut();
+        //speakOut();
+
+        for(int i = 0;i<arr.length;i++) {
+            textView.setText(arr[i]);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
                         Intent intent=new Intent(getApplicationContext(),SpeechToText.class);
                         startActivity(intent);
                         finish();
@@ -61,11 +70,7 @@ public class SplashScreen extends Activity implements TextToSpeech.OnInitListene
         for(int i =0;i<ar.length;i++) {
             tts.speak(ar[i], TextToSpeech.QUEUE_FLUSH, null);
             textView.setText(arr[i]);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
         }
     }
 
@@ -85,6 +90,11 @@ public class SplashScreen extends Activity implements TextToSpeech.OnInitListene
         } else {
             Log.e("TTS", "Initilization Failed!");
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     class Animate extends AsyncTask<Void,String,String>{

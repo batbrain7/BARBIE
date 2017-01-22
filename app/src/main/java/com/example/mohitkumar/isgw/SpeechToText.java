@@ -17,15 +17,19 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +39,7 @@ import java.util.Map;
 import ai.api.AIDataService;
 import ai.api.AIServiceException;
 import ai.api.android.AIConfiguration;
+import ai.api.http.HttpClient;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
 import ai.api.model.Result;
@@ -50,8 +55,9 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
     String sout;
     FloatingActionButton refbut,chatbut;
     CardView cardView;
+    String URL1 = "http://7d0e6594.ngrok.io/isgw/index.php?";
     private static String TAG = MainActivity.class.getSimpleName();
-    String s;
+    String s,jsonResponse;
     String ACCESS_TOKEN="67565cd4b0a34c6c82ec141d969541be";
     private TextView txtSpeechInput,res;
     private FloatingActionButton btnSpeak;
@@ -64,15 +70,12 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
         res=(TextView)findViewById(R.id.response);
         //refbut = (FloatingActionButton)findViewById(R.id.float_butt2);
         chatbut = (FloatingActionButton)findViewById(R.id.float_butt1);
-<<<<<<< HEAD
         btnSpeak=(FloatingActionButton)findViewById(R.id.btnSpeak);
         //cardView =(CardView)findViewById(R.id.card_view1);
         tts = new TextToSpeech(this,this);
-=======
-        btnSpeak=(ImageButton)findViewById(R.id.btnSpeak);
-        cardView =(CardView)findViewById(R.id.card_view1);
+        btnSpeak=(FloatingActionButton)findViewById(R.id.btnSpeak);
+        //cardView =(CardView)findViewById(R.id.card_view1);
         tts = new TextToSpeech(SpeechToText.this,SpeechToText.this);
->>>>>>> d4878a12b5af74f4b4612a3479a542ec1f502039
 
         chatbut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,6 +151,10 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
 
                     s = txtSpeechInput.getText().toString();
 
+                    //URL1 = URL1 + s;
+
+                   // Toast.makeText(getApplicationContext(),URL1,Toast.LENGTH_LONG).show();
+
                     final AIConfiguration config = new AIConfiguration(ACCESS_TOKEN,
                             AIConfiguration.SupportedLanguages.English,
                             AIConfiguration.RecognitionEngine.System);
@@ -180,6 +187,11 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
                                 Result result = aiResponse.getResult();
 
                             if(result != null) {
+
+
+                                String action1 = result.getStringParameter("action");
+                                String appliance1 = result.getStringParameter("appliance");
+                                String location = result.getStringParameter("location");
                                 String s = result.getFulfillment().getSpeech().toString();
 
                                // Log.d("INHERE1",s);
@@ -187,10 +199,45 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
                                 //makeJsonObjectRequest();
 
 
+                            //MySingleton.getInstance(SpeechToText.this).addToRequestQueue();
+
                                 res.setText(s);
                                 speakOut();
 
-                                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                                if(action1.equals("turn on"))
+                                {
+                                    action1 = "on";
+                                } else if(action1.equals("turn off")) {
+                                    action1 = "off";
+                                }
+
+                                URL1 = URL1 + "action=" + action1 + "&appliance="+appliance1+
+                                        "&location=" + location;
+
+                                final RequestQueue requestQueue = Volley.newRequestQueue(SpeechToText.this);
+
+
+                                StringRequest stringRequest = new StringRequest(Request.Method.GET, URL1, new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        Log.d("SUCCESS","Request made");
+                                        requestQueue.stop();
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
+                                        requestQueue.stop();
+                                    }
+                                });
+
+                                requestQueue.add(stringRequest);
+
+                                //HttpClient httpClient = new HttpClient();
+
+
+                                //Toast.makeText(getApplicationContext(),"action=" + action1 + "&appliance="+appliance1+
+                                  //     "&location=" + location, Toast.LENGTH_LONG).show();
                             } else  {
                                 onPostExecute( aiResponse);
                                 res.setText("Please say that again!");
@@ -207,6 +254,39 @@ public class SpeechToText extends AppCompatActivity implements TextToSpeech.OnIn
 
     }
 
+
+//    private void makeJsonObjectRequest() {
+//        final String finalStr = URL;
+//        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+//                finalStr, (JSONObject) null, new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                Log.d(TAG, response.toString());
+//
+//                try {
+//                    // Parsing json object response
+//                    // response will be a json object
+//                    //String name = response.getString("name");
+//                    // String email = response.getString("email");
+//                    //JSONObject phone = response.getJSONObject("phone");
+//                    //String home = phone.getString("home");
+//                    //String mobile = phone.getString("mobile");
+//
+//                    jsonResponse = response.getJSONObject("fulfillment").getString("speech");
+//
+//                    Log.d("Response", jsonResponse);
+//
+//                    res.setText(jsonResponse);
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                    Toast.makeText(getApplicationContext(),
+//                            "Error: " + e.getMessage(),
+//                            Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+//    }
 
     @Override
     public void onInit(int status) {

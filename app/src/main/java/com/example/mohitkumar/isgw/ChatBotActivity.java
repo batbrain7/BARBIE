@@ -18,6 +18,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,6 +51,7 @@ public class ChatBotActivity extends AppCompatActivity {
 
     String ACCESS_TOKEN="67565cd4b0a34c6c82ec141d969541be";
 
+    String URL1 = "http://7d0e6594.ngrok.io/isgw/index.php?";
 
     private ListView mListView;
     private FloatingActionButton mButtonSend;
@@ -111,13 +119,52 @@ public class ChatBotActivity extends AppCompatActivity {
 
                         if(result != null) {
 
+                            String action1 = result.getStringParameter("action");
+                            String appliance1 = result.getStringParameter("appliance");
+                            String location = result.getStringParameter("location");
+
                              sres = result.getFulfillment().getSpeech().toString();
+
+                            if(action1.equals("turn on"))
+                            {
+                                action1 = "on";
+                            } else if(action1.equals("turn off")) {
+                                action1 = "off";
+                            }
+
+
+                            URL1 = URL1 + "action=" + action1 + "&appliance="+appliance1+
+                                    "&location=" + location;
+
+                       //     Toast.makeText(getApplicationContext(),"action=" + action1 + "&appliance="+appliance1+
+                         //           "&location=" + location, Toast.LENGTH_LONG).show();
+
+                            final RequestQueue requestQueue = Volley.newRequestQueue(ChatBotActivity.this);
+
+
+                            StringRequest stringRequest = new StringRequest(Request.Method.GET, URL1, new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    Log.d("Success","Request made");
+                                    requestQueue.stop();
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
+                                    requestQueue.stop();
+                                }
+                            });
+
+                            requestQueue.add(stringRequest);
 
                             sendMessage(message);
                             Log.d("RES",sres);
                             mimicOtherMessage(sres);
                             mEditTextMessage.setText("");
                             mListView.setSelection(mAdapter.getCount() - 1);
+
+
                             // Log.d("INHERE1",s);
 
                             //makeJsonObjectRequest();

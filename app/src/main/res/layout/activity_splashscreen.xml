@@ -9,6 +9,8 @@
         android:layout_height="250dp"
         android:id="@+id/text3"
         android:textColor="#000"
+        android:text="Class boy"
+        android:gravity="center"
         android:textSize="25dp"
         />
 

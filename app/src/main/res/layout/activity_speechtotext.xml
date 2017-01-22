@@ -8,16 +8,35 @@
     android:background="@drawable/gradient"
     >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
     <TextView
         android:id="@+id/txtSpeechInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="50dp"
         android:textColor="#fff"
+        android:padding="5dp"
+        android:background="@drawable/shape_dialog"
         android:textStyle="normal" />
 
+    <TextView
+        android:textColor="#fff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="19dp"
+        android:id="@+id/response"
+        android:padding="5dp"
+        android:background="@drawable/shape_dialog"
+        android:backgroundTint="#0479b3"
+        />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,13 +69,5 @@
             android:textSize="15dp"
             android:textStyle="normal" />
     </LinearLayout>
-    <TextView
-        android:textColor="#fff"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="19dp"
-        android:id="@+id/response" />
 
 </RelativeLayout>
