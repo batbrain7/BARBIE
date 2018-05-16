@@ -2,7 +2,7 @@
 
 An home automation app that utilises speech recognition and NLP to understand and recognise the words and accordingly responds to the user talking or chatting. <br />
 The AI bot after understanding the command by the user replies to the user in speech form and via text just like Smart Assisstants as Alexa or Siri.<br />
-The bot using NLP detects specific words such as Home,Room,Door,Lights, and other electrical appliances reference and then triggers a request to the server which operates the Raspberry Pi to perform different IOT functions such turning the bulbs on or off etc.<br />
+The bot using API.AI's api detects specific words such as Home,Room,Door,Lights, and other electrical appliances reference and then triggers a request to the server which operates the arduino to perform different IOT functions such turning the bulbs on or off etc.<br />
 This is an IOT project and was created in the ISGW Hackathon 2017.<br />
 Below are some screenshots of the app.<br />
 
